@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaulian CFD: Crystal</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <div class="logo-mark"></div>
+                <h1>Gaulian CFD</h1>
+            </div>
+            <div class="header-controls">
+                <button id="themeBtn" class="theme-toggle" title="Toggle Theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div id="status-badge" class="badge-stable">
+                <span class="dot"></span> System Stable
+            </div>
+        </div>
+
+        <div class="scroll-content">
+            
+            <div class="panel">
+                <div class="panel-header">Control</div>
+                
+                <div class="control-group">
+                    <label>Presets</label>
+                    <div class="preset-grid">
+                        <button class="preset-btn btn-cyan" onclick="applyPreset('laminar')">Laminar</button>
+                        <button class="preset-btn btn-purple" onclick="applyPreset('vortex')">Vortex</button>
+                        <button class="preset-btn btn-orange" onclick="applyPreset('turb')">Turbulent</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Physics Grid</label>
+                    <div class="select-wrapper">
+                        <select id="resSelect">
+                            <option value="0">Low (400x200)</option>
+                            <option value="1" selected>Standard (800x400)</option>
+                            <option value="2">High (1200x600)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="playBtn" class="primary-btn active">▶ Running</button>
+                    <button id="resetBtn" class="secondary-btn">Reset</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">Physics</div>
+                <div class="slider-row">
+                    <div class="label-row"><label id="lbl-re">Re</label> <span class="val-mono" id="disp-re">1000</span></div>
+                    <input type="range" id="reSlider" min="100" max="10000" step="100" value="1000">
+                </div>
+                <div class="slider-row">
+                    <div class="label-row"><label id="lbl-u">U_in</label> <span class="val-mono" id="disp-u">0.10</span></div>
+                    <input type="range" id="uSlider" min="0.01" max="0.20" step="0.01" value="0.10">
+                </div>
+                <div class="slider-row">
+                    <div class="label-row"><label>Sim Speed</label> <span class="val-mono" id="disp-sp">8</span></div>
+                    <input type="range" id="speedSlider" min="1" max="50" step="1" value="8">
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">Aerodynamics</div>
+                <div class="chart-container">
+                    <div class="chart-meta"><span id="lbl-cd">Cd</span> <span class="val-mono" style="color:var(--chart-1)" id="val-cd">0.00</span></div>
+                    <canvas id="dragCanvas" class="plot"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-meta"><span id="lbl-cl">Cl</span> <span class="val-mono" style="color:var(--chart-2)" id="val-cl">0.00</span></div>
+                    <canvas id="liftCanvas" class="plot"></canvas>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">Visualization</div>
+                <div class="control-group">
+                    <label>Mode</label>
+                    <div class="select-wrapper">
+                        <select id="viewSelect">
+                            <option value="0">Vorticity (Curl)</option>
+                            <option value="1">Velocity Magnitude</option>
+                            <option value="2">Pressure Field</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Palette</label>
+                    <div class="select-wrapper">
+                        <select id="cmapSelect">
+                            <option value="0">Turbo</option>
+                            <option value="1">Magma</option>
+                            <option value="2">Viridis</option>
+                            <option value="3">Inferno</option>
+                            <option value="4">Plasma</option>
+                            <option value="5">Jet</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group mt-2">
+                    <button id="vecBtn" class="vector-btn">
+                        <span class="indicator"></span> Show Vector Field
+                    </button>
+                </div>
+
+                <div class="slider-row">
+                    <div class="label-row"><label>Contrast</label></div>
+                    <input type="range" id="conSlider" min="0.5" max="3.0" step="0.1" value="0.8">
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="m-label">Performance</div>
+                    <div class="m-val" id="stat-mlups">0 MLUPS</div>
+                </div>
+                <div class="metric-card">
+                    <div class="m-label">Probe P</div>
+                    <div class="m-val" id="probe-val">0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <span id="fps">0 FPS</span>
+            <span>v1.0</span>
+        </div>
+    </aside>
+
+    <main id="sim-container">
+        <canvas id="simCanvas"></canvas>
+        <div id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">INITIALIZING</div>
+        </div>
+    </main>
+
+</body>
+</html>
+
