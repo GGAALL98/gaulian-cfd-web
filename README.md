@@ -1,4 +1,4 @@
-# **Gaulian CFD — Web Edition**
+# **Gaulian CFD - Web Edition**
 
 <p align="center">
   <img 
@@ -8,7 +8,7 @@
   >
 </p>
 
-A lightweight, WebGL-powered Lattice-Boltzmann CFD playground — **architected by a generative AI** and refined into a browser-native simulation engine.
+A lightweight, WebGL-powered Lattice-Boltzmann CFD playground - **architected by a generative AI** and refined into a browser-native simulation engine.
 
 This repository hosts the web edition of *Gaulian CFD*: a real-time, 2D LBM fluid solver running entirely on the GPU via WebGL2. It’s built for exploration, rapid iteration, and the sheer joy of watching vortices bloom in your browser.
 
@@ -23,4 +23,4 @@ This repository hosts the web edition of *Gaulian CFD*: a real-time, 2D LBM flui
 2. Open `index.html` in your browser
 
 ## **Quickstart (Online)**
-Interactive demo: [Gaulian CFD — Web Edition](https://ggaall98.github.io/gaulian-cfd-web/)
+Interactive demo: [Gaulian CFD - Web Edition](https://ggaall98.github.io/gaulian-cfd-web/)
